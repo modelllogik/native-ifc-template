@@ -44,6 +44,8 @@ The template is ready to use: [`template/native_template.ifc`](template/native_t
    `%APPDATA%\bonsai\bonsai\data`.
 2. Restart Blender, then *New Project* in Bonsai and choose the template.
 
+**Note for Bonsai 0.9.1:** after *New Project* with this template, save the project and open it again. Until then the style editor fails and door or window types cannot be placed ([#10134](https://github.com/IfcOpenShell/IfcOpenShell/issues/10134)).
+
 What is inside: storeys KG, EG, OG and DG with their levels, 39 materials with
 categories and colours, and 234 types (layered walls, slabs and coverings; doors and
 windows in timber and PVC; timber and steel profiles; level annotations), all in an
@@ -96,5 +98,7 @@ tests it in Bonsai; the build is reproducible and checked against the previous v
 
 ## Related work upstream
 
-Findings that belong to Bonsai or IfcOpenShell are reported there, not worked around
-silently here. Links to those reports will be listed in this section.
+Findings that belong to Bonsai or IfcOpenShell are reported there, not worked around silently here:
+
+- [#10133](https://github.com/IfcOpenShell/IfcOpenShell/issues/10133) – GPU wireframe snap: the batch cache is stored and looked up under different keys.
+- [#10134](https://github.com/IfcOpenShell/IfcOpenShell/issues/10134) – *New Project* with a template that has a site: merged surface styles and types get no Blender material or object.
