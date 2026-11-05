@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+# IFC-SPF is text; keep LF so diffs stay readable across systems
+*.ifc text eol=lf diff
+*.ids text eol=lf
+*.svg text eol=lf
+
+*.blend binary
+*.pdf binary
+*.png binary

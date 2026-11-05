@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Blender
+*.blend1
+*.blend2
+
+# IFC working copies and backups
+*.ifc.bak
+*~.ifc
+
+# Generated output (drawing sets are rebuilt from the model)
+build/
+out/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

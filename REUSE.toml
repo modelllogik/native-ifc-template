@@ -1,0 +1,27 @@
+version = 1
+
+# Code: GPL-3.0-or-later.
+[[annotations]]
+path = ["**/*.py"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Andràs Marghescu and contributors"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Templates, drawing style, examples, IDS and documentation: CC BY 4.0.
+[[annotations]]
+path = [
+  "template/**/*.ifc",
+  "style/**",
+  "examples/**",
+  "ids/**",
+  "docs/**",
+  "README.md",
+  "CONTRIBUTING.md",
+  "REUSE.toml",
+  ".gitignore",
+  ".gitattributes",
+  "**/.gitkeep",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Andràs Marghescu and contributors"
+SPDX-License-Identifier = "CC-BY-4.0"
