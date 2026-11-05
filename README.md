@@ -4,8 +4,8 @@
 
 *Modelllogik is German for model logic.*
 
-> **Status: early.** This repository has its structure, licences and contribution rules.
-> The template, the drawing style and the example model follow in the first release.
+> **Status: v0.1.0.** This release contains the IFC project template and the script that
+> builds it. The drawing style, a neutral example model and an IDS follow in later releases.
 
 ## Why
 
@@ -35,12 +35,40 @@ want to use native IFC in vocational training.
 | `scripts/` | Helpers for building, checking and deriving drawings | GPL-3.0-or-later |
 | `docs/` | Documentation; `docs/de/` is a German guide for trainers | CC BY 4.0 |
 
+## Quick start
+
+The template is ready to use: [`template/native_template.ifc`](template/native_template.ifc).
+
+1. Copy it into Bonsai's project template folder, `<data dir>/templates/projects/`.
+   The data dir is set in Bonsai's add-on preferences; on Windows it defaults to
+   `%APPDATA%\bonsai\bonsai\data`.
+2. Restart Blender, then *New Project* in Bonsai and choose the template.
+
+What is inside: storeys KG, EG, OG and DG with their levels, 39 materials with
+categories and colours, and 234 types (layered walls, slabs and coverings; doors and
+windows in timber and PVC; timber and steel profiles; level annotations), all in an
+`IfcProjectLibrary`. The template has no georeference on purpose; see the docstring of
+the build script.
+
+Names of types and materials are German: the template follows German building
+practice and the drawing conventions of DIN 1356.
+
+### Building the template yourself
+
+```bash
+python template/build_template.py native_template.ifc
+```
+
+The script needs IfcOpenShell only, not Blender. The same script gives the same file
+byte for byte.
+
 ## Requirements
 
-Tested versions are named with every release. Planned baseline:
+Tested with:
 
-- Blender with the Bonsai add-on
-- IfcOpenShell (Python) for the build and check scripts
+- Blender 5.2.0 LTS
+- Bonsai 0.9.1 (unstable channel)
+- IfcOpenShell 0.9.1a261028
 
 ## Licences
 
@@ -59,6 +87,12 @@ Standards such as DIN 1356 are referred to by content; their text is not reprodu
 
 Observations, questions and pull requests are welcome. Please read
 [`CONTRIBUTING.md`](CONTRIBUTING.md) first.
+
+## How this is made
+
+The build script and this repository are developed with the help of an AI assistant
+(Claude, by Anthropic). The maintainer decides what goes in, reviews every change and
+tests it in Bonsai; the build is reproducible and checked against the previous version.
 
 ## Related work upstream
 
