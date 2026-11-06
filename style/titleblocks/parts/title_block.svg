@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Title block (Schriftfeld) for the sheet frames DIN A4 to A0
+  native-ifc-template - style/titleblocks/parts/title_block.svg - CC BY 4.0
+
+  USE YOUR OWN TITLE BLOCK
+  1. Edit this file (Inkscape: document unit mm, 1 user unit = 1 mm) and
+     replace the sample texts: office, author, project, drawn by, scale.
+  2. Run python scripts/build_titleblocks.py with the option overwrite
+     (two hyphens, then overwrite). It writes all formats to
+     style/titleblocks/ again.
+  3. Run scripts/install_style.py with the option overwrite, which copies
+     the frames to Bonsai's data dir, and create the sheets again in Bonsai.
+
+  RULES FOR THIS FILE
+  - Root: width and height in mm, viewBox "0 0 width height" (here 180 x 55).
+  - At most 185 mm wide (then it also fits A4 portrait) and 287 mm high.
+  - Styles in exactly one style block inside defs; class names apply to the
+    whole sheet. The frame classes d18, d25, d50 come with the script.
+  - Everything after the end of defs is copied unchanged and placed bottom
+    right in the frame, flush with the frame line.
+  - If less than 20 mm remain to the left frame (A4 portrait), the script
+    stretches the title block to the left frame: the rectangle with x 0 and
+    full width and the horizontal lines from x1 0 to full width; texts and
+    groups left of the first vertical line move with them.
+  - Fields Bonsai fills when creating the sheet (attributes of the sheet's
+    IfcDocumentInformation): Name, Identification, Revision,
+    LastRevisionTime, each in double curly braces. Never write double curly
+    braces in a comment.
+  - Fixed texts: office, author, project, drawn by, scale.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="180mm" height="55mm" viewBox="0 0 180 55" version="1.1">
+  <defs>
+    <style type="text/css">
+      .lab { font-family:Arial, Helvetica, 'Liberation Sans', sans-serif; font-size:2.5px; fill:#000000; }
+      .v25 { font-family:Arial, Helvetica, 'Liberation Sans', sans-serif; font-size:2.5px; fill:#000000; }
+      .v30 { font-family:Arial, Helvetica, 'Liberation Sans', sans-serif; font-size:3px; fill:#000000; }
+      .v35 { font-family:Arial, Helvetica, 'Liberation Sans', sans-serif; font-size:3.5px; fill:#000000; }
+      .v50 { font-family:Arial, Helvetica, 'Liberation Sans', sans-serif; font-size:5px; font-weight:bold; fill:#000000; }
+    </style>
+  </defs>
+    <rect x="0" y="0" width="180" height="55" class="d50" fill="#ffffff"/>
+    <line x1="0" y1="18" x2="180" y2="18" class="d25"/>
+    <line x1="0" y1="27" x2="180" y2="27" class="d25"/>
+    <line x1="0" y1="39" x2="180" y2="39" class="d25"/>
+    <line x1="50" y1="39" x2="50" y2="55" class="d25"/>
+    <line x1="67" y1="39" x2="67" y2="55" class="d25"/>
+    <line x1="92" y1="39" x2="92" y2="55" class="d25"/>
+    <line x1="130" y1="39" x2="130" y2="55" class="d25"/>
+    <line x1="120" y1="0" x2="120" y2="18" class="d25"/>
+    <text x="2.5" y="3.6" class="lab">Büro / Ausbildungsstätte</text>
+    <text x="2.5" y="10" class="v50">Name</text>
+    <text x="2.5" y="15" class="v25">Anschrift</text>
+    <text x="122.5" y="3.6" class="lab">Verfasser</text>
+    <text x="122.5" y="8.4" class="v30">Vorname Nachname</text>
+    <text x="122.5" y="14.4" class="v30">Kontakt</text>
+    <text x="2.5" y="21.3" class="lab">Projekt</text>
+    <text x="2.5" y="25.6" class="v35">Projektname</text>
+    <text x="2.5" y="30.3" class="lab">Planinhalt</text>
+    <text x="2.5" y="36.6" class="v50">{{Name}}</text>
+    <text x="2.5" y="42.3" class="lab">Plan-Nr.</text>
+    <text x="2.5" y="50" class="v35">{{Identification}}</text>
+    <text x="52.5" y="42.3" class="lab">Index</text>
+    <text x="52.5" y="50" class="v35">{{#Revision}}{{Revision}}{{/Revision}}{{^Revision}}–{{/Revision}}</text>
+    <text x="69.5" y="42.3" class="lab">Maßstab</text>
+    <text x="69.5" y="50" class="v35">1:50</text>
+    <text x="94.5" y="42.3" class="lab">gezeichnet</text>
+    <text x="94.5" y="50" class="v35">Kürzel</text>
+    <text x="132.5" y="42.3" class="lab">Datum</text>
+    <text x="132.5" y="50" class="v35">{{#LastRevisionTime}}{{LastRevisionTime}}{{/LastRevisionTime}}</text>
+</svg>

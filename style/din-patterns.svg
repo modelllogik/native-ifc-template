@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hatch patterns after DIN 1356-1 for Bonsai drawings, scale 1:50 and 1:100
+  native-ifc-template - style/din-patterns.svg - CC BY 4.0
+
+  These patterns are ADDED to Bonsai's own patterns.svg of a drawing
+  (scripts/install_style.py does that); Bonsai's patterns stay as they are.
+  style/din.css refers to them by id, e.g. fill: url(#din-mauerwerk).
+
+  Sizes are millimetres on paper; hatch lines 0.1 mm, line in the middle of
+  the tile, no white background unless noted. Calibrate on a print, not on
+  the screen.
+
+  New pattern: copy a pattern block, give it the id din-NAME, add a rule in
+  section 4 of din.css and run scripts/install_style.py again.
+
+  Attributes for a later post-processing step (ignored by Bonsai and browsers):
+    data-din-bezug="bauteil"        pattern turns fully with the element
+    data-din-bezug="blatt"          pattern stays fixed to the sheet
+    data-din-zeichen="kreuz"        cross per short timber section
+    data-din-zeichen="mittellinie"  band on the middle of the layer
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+<defs>
+<pattern id="din-mauerwerk" width="1.5" height="1.5" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+    <!-- Masonry: single diagonal lines, 1.5 mm apart. -->
+    <line x1="0.75" y1="0" x2="0.75" y2="1.5" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-stahlbeton" width="3" height="1.8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+    <!-- Reinforced concrete: full line alternating with a broken line. -->
+    <line x1="0.75" y1="0" x2="0.75" y2="1.8" style="stroke:black; stroke-width:0.1" />
+    <line x1="2.25" y1="0.3" x2="2.25" y2="1.5" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-beton" width="3" height="1.8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+    <!-- Plain concrete: broken lines, staggered. -->
+    <line x1="0.75" y1="0.3" x2="0.75" y2="1.5" style="stroke:black; stroke-width:0.1" />
+    <line x1="2.25" y1="1.2" x2="2.25" y2="2.4" style="stroke:black; stroke-width:0.1" />
+    <line x1="2.25" y1="-0.6" x2="2.25" y2="0.6" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-kies" width="4" height="4" patternUnits="userSpaceOnUse">
+    <!-- Gravel: dots and small circles. -->
+    <circle cx="0.8" cy="1.2" r="0.16" style="fill:black; stroke:none" />
+    <circle cx="2.6" cy="0.6" r="0.16" style="fill:black; stroke:none" />
+    <circle cx="3.3" cy="2.8" r="0.16" style="fill:black; stroke:none" />
+    <circle cx="1.6" cy="3.2" r="0.16" style="fill:black; stroke:none" />
+    <circle cx="3.0" cy="1.6" r="0.35" style="fill:none; stroke:black; stroke-width:0.1" />
+    <circle cx="0.9" cy="2.9" r="0.3" style="fill:none; stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-daemmung" width="1.5" height="1.5" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+    <!-- Perimeter insulation: diagonal cross-hatch. -->
+    <line x1="0.75" y1="0" x2="0.75" y2="1.5" style="stroke:black; stroke-width:0.1" />
+    <line x1="0" y1="0.75" x2="1.5" y2="0.75" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-putz" width="4" height="4" patternUnits="userSpaceOnUse">
+    <!-- Plaster, mortar: sparse dots. -->
+    <circle cx="0.6" cy="0.9" r="0.12" style="fill:black; stroke:none" />
+    <circle cx="2.7" cy="2.9" r="0.12" style="fill:black; stroke:none" />
+</pattern>
+<pattern id="din-erdreich" width="5" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse" data-din-bezug="blatt">
+    <!-- Soil: three strokes of decreasing length, rows staggered; written as
+         parallel strokes plus a rotation so that it can later be turned into
+         real lines. Soil is not a directed element, so it stays fixed to the
+         sheet. -->
+    <line x1="0.6" y1="1.09" x2="0.6" y2="3.91" style="stroke:black; stroke-width:0.1" />
+    <line x1="1.4" y1="1.30" x2="1.4" y2="3.70" style="stroke:black; stroke-width:0.1" />
+    <line x1="2.2" y1="1.51" x2="2.2" y2="3.49" style="stroke:black; stroke-width:0.1" />
+    <line x1="3.1" y1="6.09" x2="3.1" y2="8.91" style="stroke:black; stroke-width:0.1" />
+    <line x1="3.9" y1="6.30" x2="3.9" y2="8.70" style="stroke:black; stroke-width:0.1" />
+    <line x1="4.7" y1="6.51" x2="4.7" y2="8.49" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-holz" width="4" height="4" patternUnits="userSpaceOnUse" data-din-zeichen="kreuz">
+    <!-- Timber cut across the grain: no area pattern. DIN draws a diagonal
+         cross per short section; that needs post-processing. Here only the
+         white fill. -->
+    <rect width="4" height="4" style="fill:white; stroke:none" />
+</pattern>
+<pattern id="din-holzwerkstoff" width="1" height="1" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse" data-din-bezug="bauteil">
+    <!-- Wood-based panel: lines across the panel, 1.0 mm apart. -->
+    <rect width="1" height="1" style="fill:white; stroke:none" />
+    <line x1="0.5" y1="0" x2="0.5" y2="1" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-abdichtung" width="4" height="4" patternUnits="userSpaceOnUse" data-din-zeichen="mittellinie">
+    <!-- Waterproofing: no area pattern. DIN draws a band on the middle of the
+         layer; that needs post-processing. Here only the white fill. -->
+    <rect width="4" height="4" style="fill:white; stroke:none" />
+</pattern>
+<pattern id="din-belag" width="4" height="4" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse" data-din-bezug="bauteil">
+    <!-- Paving, tiles: joints across the layer, 4 mm apart. -->
+    <rect width="4" height="4" style="fill:white; stroke:none" />
+    <line x1="2" y1="0" x2="2" y2="4" style="stroke:black; stroke-width:0.1" />
+</pattern>
+<pattern id="din-kunststoff" width="1.5" height="1.5" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse" data-din-bezug="bauteil">
+    <!-- Plastics: square grid 1.5 mm, parallel to the element. -->
+    <rect width="1.5" height="1.5" style="fill:white; stroke:none" />
+    <line x1="0.75" y1="0" x2="0.75" y2="1.5" style="stroke:black; stroke-width:0.1" />
+    <line x1="0" y1="0.75" x2="1.5" y2="0.75" style="stroke:black; stroke-width:0.1" />
+</pattern>
+</defs>
+</svg>

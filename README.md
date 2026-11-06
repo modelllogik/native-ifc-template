@@ -4,8 +4,9 @@
 
 *Modelllogik is German for model logic.*
 
-> **Status: v0.1.0.** This release contains the IFC project template and the script that
-> builds it. The drawing style, a neutral example model and an IDS follow in later releases.
+> **Status: v0.2.0.** This release adds the drawing style after DIN 1356-1 (CSS, hatch
+> patterns, sheet frames A4 to A0) to the IFC project template of v0.1.0. A neutral
+> example model, an IDS and the post-processing of drawings follow in later releases.
 
 ## Why
 
@@ -29,7 +30,7 @@ want to use native IFC in vocational training.
 | Folder | Content | Licence |
 |---|---|---|
 | `template/` | The IFC project template and the script that builds it | code GPL-3.0-or-later, template CC BY 4.0 |
-| `style/` | Drawing style: CSS, hatch patterns, dimension markers, title blocks A4 to A0 | CC BY 4.0 |
+| `style/` | Drawing style: CSS, hatch patterns, title blocks A4 to A0 | CC BY 4.0 |
 | `examples/` | A neutral example model and the drawing set derived from it | CC BY 4.0 |
 | `ids/` | Information Delivery Specification (IDS) to check models against the template | CC BY 4.0 |
 | `scripts/` | Helpers for building, checking and deriving drawings | GPL-3.0-or-later |
@@ -64,6 +65,51 @@ python template/build_template.py native_template.ifc
 The script needs IfcOpenShell only, not Blender. The same script gives the same file
 byte for byte.
 
+## Drawing style (DIN 1356-1, scale 1:50)
+
+Bonsai draws from the model as SVG and styles the result with CSS. The style in
+`style/` turns that into a German construction drawing:
+
+- [`style/din.css`](style/din.css) – line weights and hatching **by material
+  category** (`IfcMaterial.Category`), layer by layer: structural layers 0.50 all
+  round, other layers, windows and doors 0.25, hatching 0.10; Arial with 3.5 mm cap
+  height. Every category used in the template has a rule.
+- [`style/din-patterns.svg`](style/din-patterns.svg) – twelve hatch patterns
+  `din-*` for masonry, concrete, reinforced concrete, insulation, soil, gravel and
+  more.
+- [`style/titleblocks/`](style/titleblocks/) – sheet frames DIN A4 to A0 after
+  DIN 824 form A with fold marks and a title block whose fields Bonsai fills from
+  the sheet. The title block is a sample with placeholders; edit
+  `style/titleblocks/parts/title_block.svg` and run
+  `python scripts/build_titleblocks.py --overwrite`.
+
+The style is an **addition** to Bonsai's own `default.css` and `patterns.svg`, not a
+replacement. `scripts/install_style.py` merges it in; running it again replaces the
+earlier addition and changes nothing else.
+
+```bash
+# into Bonsai's data dir: used by every project that has no drawing style yet
+python scripts/install_style.py --data-dir "%APPDATA%\bonsai\bonsai\data" --bonsai-assets <bonsai>/bim/data/assets
+
+# into one project that already has drawings
+python scripts/install_style.py --project-assets <project>/drawings/assets
+```
+
+Inside Blender (Text Editor, Run Script) `--bonsai-assets` is found by itself. Then
+regenerate the drawings in Bonsai.
+
+**A new material** needs no change to the style: give it one of the categories of
+section 4 in `din.css` (spelt as there, e.g. `Daemmung`, because Bonsai keeps only
+a–z, A–Z and 0–9 in class names). **A new category** is one line in section 4,
+plus a pattern in `din-patterns.svg` if it needs one. The German guide in `docs/de/`
+walks through both.
+
+**Not yet in this release:** hatches as real line paths for print (pattern fills can
+break up when a PDF is rasterised), the timber cross and the waterproofing band,
+German dimension figures and dimension markers. These need a post-processing step of
+the drawing SVG and follow in a later release. Line weights and pattern spacing are
+checked on screen and in Inkscape; calibrate them on a print before relying on them.
+
 ## Requirements
 
 Tested with:
@@ -82,6 +128,8 @@ This repository follows the [REUSE](https://reuse.software) convention.
   See [`LICENSES/CC-BY-4.0.txt`](LICENSES/CC-BY-4.0.txt).
 
 Which licence applies to which path is recorded in [`REUSE.toml`](REUSE.toml).
+Bonsai's own `default.css` and `patterns.svg` (GPL-3.0-or-later) are not part of this
+repository; `install_style.py` adds our style to the copies Bonsai already has.
 
 Standards such as DIN 1356 are referred to by content; their text is not reproduced here.
 
