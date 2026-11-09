@@ -1,6 +1,6 @@
 # Anleitung für Ausbilder
 
-*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.2.0. Die Abschnitte zu Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
+*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.3.0. Die Abschnitte zu Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
 
 ## Worum es geht
 
@@ -15,7 +15,7 @@ Wenn das nicht klappt, ist die Anleitung unvollständig. Bitte melden Sie die St
 
 ## 1 · Installation
 
-Erprobt mit Blender 5.2.0 LTS, Bonsai 0.9.1 und IfcOpenShell 0.9.1a261028.
+Erprobt mit Blender 5.2.0 LTS, Bonsai 0.9.1 und IfcOpenShell 0.9.1a261106.
 
 1. Blender installieren, darin Bonsai über *Edit → Preferences → Get Extensions*.
 2. In den Einstellungen von Bonsai den **Datenordner** nachsehen (*Data Dir*). Unter Windows ist es `%APPDATA%\bonsai\bonsai\data`.
@@ -53,7 +53,9 @@ Das Skript **ersetzt Bonsais Dateien nicht**. Es hängt `din.css` an Bonsais `de
 
 **Planrahmen:** Das Skript kopiert die Rahmen `DIN_A4_hoch` bis `DIN_A0_quer` in den Datenordner. Beim Anlegen eines Blatts stehen sie in der Auswahl. Vorhandene Rahmen ersetzt es nur mit `--overwrite`.
 
-**Was diese Fassung noch nicht kann:** Schraffuren als echte Linien für den Druck, das Holzkreuz, das Band der Abdichtung, Maßzahlen in deutscher Schreibweise und Maßlinienmarker. Dafür braucht es eine Nachbearbeitung der Zeichnung; sie folgt in einem späteren Release. **Linienstärken und Musterabstände vor dem Einsatz an einem Ausdruck prüfen**, nicht am Bildschirm.
+**Was diese Fassung noch nicht kann:** Schraffuren als echte Linien für den Druck, das Holzkreuz, das Band der Abdichtung, Maßzahlen in deutscher Schreibweise und Maßlinienmarker. Dafür braucht es eine Nachbearbeitung der Zeichnung; sie entsteht im Add-on [bonsai-btk](https://github.com/modelllogik/bonsai-btk). **Linienstärken und Musterabstände vor dem Einsatz an einem Ausdruck prüfen**, nicht am Bildschirm.
+
+**Von v0.2.0 auf v0.3.0:** die neue `native_template.ifc` kopieren und `install_style.py` erneut ausführen, bei Projekten mit Zeichnungen auch mit `--project-assets`. Die Kategorie `Kies` heißt jetzt **`Schuettung`**; `Kies` steht für die Bodenart. Eigene Materialien mit der Kategorie `Kies`, die eingebauten Kies meinen (Dränschicht, Kiesbett), in Bonsai auf `Schuettung` umstellen.
 
 ## 4 · Eine Schraffur ergänzen
 
@@ -62,7 +64,7 @@ Schraffur und Linienstärke hängen an der **Kategorie** eines Materials (`IfcMa
 **Fall A – ein neues Material mit vorhandener Darstellung** (zum Beispiel ein weiterer Mauerstein):
 
 1. Das Material in Bonsai anlegen.
-2. Als *Category* einen Wert aus Abschnitt 4 von `style/din.css` eintragen, genau so geschrieben, also `Daemmung` und nicht `Dämmung`. Bonsai übernimmt in Klassennamen nur Buchstaben a–z, A–Z und Ziffern.
+2. Als *Category* einen Wert aus Abschnitt 4 von `style/din.css` eintragen, genau so geschrieben, also `Daemmung` und nicht `Dämmung`. Bonsai übernimmt in Klassennamen nur Buchstaben a–z, A–Z und Ziffern. Welche Kategorie wofür steht, beschreibt die zweisprachige Liste [`docs/material-categories.md`](../material-categories.md), zum Beispiel `Bahnen` für Dampfbremsen und Folien, `Schuettung` für eingebauten Kies und die Bodenarten unter `Erdreich`.
 3. Zeichnungen neu erzeugen. Am Stil ist nichts zu ändern.
 
 **Fall B – eine neue Darstellung** (eine Kategorie, die es noch nicht gibt):

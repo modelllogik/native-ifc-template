@@ -75,9 +75,11 @@
      material as class layer-material-category-CATEGORY. Line 0.50 only for
      structural layers, otherwise 0.25. The categories match the materials of
      template/native_template.ifc.
-     Holz and Abdichtung have no area pattern: DIN draws a cross per timber
-     section and a band on the waterproofing; that needs post-processing,
-     which is not part of this release. */
+     Holz, Abdichtung and Bahnen have no area pattern: DIN draws a cross per
+     timber section and a band on the waterproofing; that needs post-processing
+     (bonsai-btk). CSS knows no parent categories: every subcategory of
+     docs/material-categories.md has its own rule, for now drawn like its
+     parent (Bahnen like Abdichtung, soil types like Erdreich). */
   fill: none; stroke: black; stroke-width: 0.25;
 }
 .cut.layer-material-category-Mauerwerk         { fill: url(#din-mauerwerk);      stroke-width: 0.50; /* legend: Mauerwerk - masonry */ }
@@ -86,15 +88,24 @@
 .cut.layer-material-category-Holz              { fill: url(#din-holz);           stroke-width: 0.50; /* legend: Holz - timber */ }
 .cut.layer-material-category-Stahl             { fill: black;                    stroke-width: 0.50; /* legend: Stahl - steel */ }
 .cut.layer-material-category-Holzwerkstoff     { fill: url(#din-holzwerkstoff);  stroke-width: 0.25; /* legend: Holzwerkstoff - wood-based panel */ }
-.cut.layer-material-category-Daemmung          { fill: #d9d9d9;                  stroke-width: 0.25; /* legend: Dämmung - thermal insulation */ }
+.cut.layer-material-category-Daemmung          { fill: #d9d9d9;                  stroke-width: 0.25; /* legend: Dämmung - insulation */ }
 .cut.layer-material-category-Perimeterdaemmung { fill: url(#din-daemmung);       stroke-width: 0.25; /* legend: Perimeterdämmung - perimeter insulation */ }
 .cut.layer-material-category-Abdichtung        { fill: url(#din-abdichtung);     stroke-width: 0.25; /* legend: Abdichtung - waterproofing */ }
+.cut.layer-material-category-Bahnen            { fill: url(#din-abdichtung);     stroke-width: 0.25; /* legend: Bahnen und Folien - membranes and foils */ }
 .cut.layer-material-category-Putz              { fill: url(#din-putz);           stroke-width: 0.25; /* legend: Putz, Mörtel - plaster, mortar */ }
 .cut.layer-material-category-Estrich           { fill: white;                    stroke-width: 0.25; /* legend: Estrich - screed */ }
 .cut.layer-material-category-Trockenbau        { fill: #8c8c8c;                  stroke-width: 0.25; /* legend: Trockenbau - drywall */ }
 .cut.layer-material-category-Glas              { fill: white;                    stroke-width: 0.25; /* legend: Glas - glass */ }
-.cut.layer-material-category-Kies              { fill: url(#din-kies);           stroke-width: 0.25; /* legend: Kies - gravel */ }
-.cut.layer-material-category-Erdreich          { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Erdreich - soil */ }
+.cut.layer-material-category-Schuettung        { fill: url(#din-kies);           stroke-width: 0.25; /* legend: Schüttung, Kies - granular fill, gravel */ }
+.cut.layer-material-category-Erdreich          { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Erdreich, Boden - soil */ }
+.cut.layer-material-category-Oberboden         { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Oberboden - topsoil */ }
+.cut.layer-material-category-BindigerBoden     { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Bindiger Boden - cohesive soil */ }
+.cut.layer-material-category-Lehm              { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Lehm - loam */ }
+.cut.layer-material-category-Ton               { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Ton - clay */ }
+.cut.layer-material-category-Schluff           { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Schluff - silt */ }
+.cut.layer-material-category-NichtbindigerBoden { fill: url(#din-erdreich);      stroke-width: 0.25; /* legend: Nichtbindiger Boden - non-cohesive soil */ }
+.cut.layer-material-category-Sand              { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Sand - sand */ }
+.cut.layer-material-category-Kies              { fill: url(#din-erdreich);       stroke-width: 0.25; /* legend: Kies (Bodenart) - gravel (soil type) */ }
 .cut.layer-material-category-Dachdeckung       { fill: white;                    stroke-width: 0.25; /* legend: Dachdeckung - roofing */ }
 .cut.layer-material-category-Belag             { fill: url(#din-belag);          stroke-width: 0.25; /* legend: Belag - paving, tiles */ }
 .cut.layer-material-category-Metall            { fill: black;                    stroke-width: 0.25; /* legend: Metall - sheet metal */ }

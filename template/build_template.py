@@ -55,8 +55,8 @@ import ifcopenshell.api.unit
 import ifcopenshell.guid
 import ifcopenshell.util.shape_builder
 
-VERSION = "0.1.0"
-TIMESTAMP = "2026-10-30T00:00:00"
+VERSION = "0.3.0"
+TIMESTAMP = "2026-11-09T00:00:00"
 
 # ---------------------------------------------------------------------------
 # DATA - maintained here
@@ -86,6 +86,8 @@ STOREYS = [
 
 # (name, category, RGB 0..1, transparency or None)
 # Category = key for hatching and legend in the drawing style (no umlauts).
+# The categories with their names and descriptions (German and English) are
+# listed in docs/material-categories.md.
 # Colours marked "assumed" are proposals, not taken from a product.
 MATERIALS = [
     ("Hochlochziegel_Mat", "Mauerwerk", (1.0, 0.2588, 0.0788), None),
@@ -94,8 +96,8 @@ MATERIALS = [
     ("Holzfaserplatte", "Daemmung", (0.7882, 0.6353, 0.4784), None),
     # roof structure; colours assumed
     ("Mineralwolle", "Daemmung", (0.93, 0.87, 0.55), None),
-    ("Dampfbremse", "Abdichtung", (0.15, 0.15, 0.17), None),
-    ("Unterdeckbahn", "Abdichtung", (0.15, 0.15, 0.17), None),   # vapour-open, 0.5 mm
+    ("Dampfbremse", "Bahnen", (0.15, 0.15, 0.17), None),
+    ("Unterdeckbahn", "Bahnen", (0.15, 0.15, 0.17), None),   # vapour-open, 0.5 mm
     ("Sichtschalung", "Holz", (0.91, 0.78, 0.55), None),          # planed boarding, roof overhang
     ("Stahlbeton", "Stahlbeton", (0.3743, 0.3743, 0.3743), None),
     ("Beton C25/30", "Beton", (0.62, 0.62, 0.60), None),
@@ -116,7 +118,7 @@ MATERIALS = [
     # floor build-up in layers; colours assumed
     ("EPS Ausgleichsdämmung", "Daemmung", (0.96, 0.92, 0.80), None),
     ("Trittschalldämmung", "Daemmung", (0.90, 0.85, 0.70), None),
-    ("PE-Folie", "Abdichtung", (0.15, 0.15, 0.17), None),   # 0.1 mm, exaggerated on the sheet
+    ("PE-Folie", "Bahnen", (0.15, 0.15, 0.17), None),   # 0.1 mm, exaggerated on the sheet
     ("Parkett", "Belag", (0.80, 0.60, 0.36), None),
     ("Fliesen", "Belag", (0.86, 0.86, 0.84), None),
     ("Gipskartonplatte", "Trockenbau", (0.93, 0.91, 0.86), None),
@@ -130,8 +132,18 @@ MATERIALS = [
     ("Kunststoff Blatt", "Kunststoff", (0.97, 0.97, 0.96), None),
     ("Dachziegel", "Dachdeckung", (0.6353, 0.2549, 0.1725), None),
     ("Betonpflaster", "Belag", (0.7098, 0.6863, 0.651), None),
-    ("Kies 16/32", "Kies", (0.66, 0.62, 0.55), None),
+    ("Kies 16/32", "Schuettung", (0.66, 0.62, 0.55), None),
     ("Erdreich", "Erdreich", (0.42, 0.32, 0.22), None),
+    # soil types below Erdreich, for sections through the ground and as a start
+    # for a soil report; use Erdreich where the soil type is unknown; colours assumed
+    ("Oberboden", "Oberboden", (0.27, 0.20, 0.14), None),
+    ("Bindiger Boden", "BindigerBoden", (0.55, 0.44, 0.32), None),
+    ("Lehm", "Lehm", (0.69, 0.53, 0.35), None),
+    ("Ton", "Ton", (0.60, 0.47, 0.40), None),
+    ("Schluff", "Schluff", (0.71, 0.66, 0.56), None),
+    ("Nichtbindiger Boden", "NichtbindigerBoden", (0.78, 0.71, 0.56), None),
+    ("Sand", "Sand", (0.88, 0.80, 0.60), None),
+    ("Kies, gewachsen", "Kies", (0.70, 0.66, 0.58), None),
 ]
 
 # Layered element types.

@@ -4,9 +4,13 @@
 
 *Modelllogik is German for model logic.*
 
-> **Status: v0.2.0.** This release adds the drawing style after DIN 1356-1 (CSS, hatch
-> patterns, sheet frames A4 to A0) to the IFC project template of v0.1.0. A neutral
-> example model, an IDS and the post-processing of drawings follow in later releases.
+> **Status: v0.3.0.** The material categories are reworked and described in German and
+> English in [`docs/material-categories.md`](docs/material-categories.md): a new category
+> for membranes and foils, soil types below `Erdreich`, and `Kies` renamed to `Schuettung`
+> ([upgrading](#upgrading-from-v020)). v0.2.0 added the drawing style after DIN 1356-1,
+> v0.1.0 the IFC project template. A neutral example model and an IDS follow; the
+> post-processing of drawings is developed in
+> [bonsai-btk](https://github.com/modelllogik/bonsai-btk).
 
 ## Why
 
@@ -47,8 +51,8 @@ The template is ready to use: [`template/native_template.ifc`](template/native_t
 
 **Note for Bonsai 0.9.1:** after *New Project* with this template, save the project and open it again. Until then the style editor fails and door or window types cannot be placed ([#10134](https://github.com/IfcOpenShell/IfcOpenShell/issues/10134)).
 
-What is inside: storeys KG, EG, OG and DG with their levels, 39 materials with
-categories and colours, and 234 types (layered walls, slabs and coverings; doors and
+What is inside: storeys KG, EG, OG and DG with their levels, 47 materials in 28
+categories ([list](docs/material-categories.md)) with colours, and 234 types (layered walls, slabs and coverings; doors and
 windows in timber and PVC; timber and steel profiles; level annotations), all in an
 `IfcProjectLibrary`. The template has no georeference on purpose; see the docstring of
 the build script.
@@ -100,15 +104,29 @@ regenerate the drawings in Bonsai.
 
 **A new material** needs no change to the style: give it one of the categories of
 section 4 in `din.css` (spelt as there, e.g. `Daemmung`, because Bonsai keeps only
-a–z, A–Z and 0–9 in class names). **A new category** is one line in section 4,
+a–z, A–Z and 0–9 in class names); the codes and what belongs to them are listed in
+[`docs/material-categories.md`](docs/material-categories.md). **A new category** is one line in section 4,
 plus a pattern in `din-patterns.svg` if it needs one. The German guide in `docs/de/`
 walks through both.
 
 **Not yet in this release:** hatches as real line paths for print (pattern fills can
 break up when a PDF is rasterised), the timber cross and the waterproofing band,
 German dimension figures and dimension markers. These need a post-processing step of
-the drawing SVG and follow in a later release. Line weights and pattern spacing are
+the drawing SVG; it is developed in [bonsai-btk](https://github.com/modelllogik/bonsai-btk)
+(see its roadmap). Line weights and pattern spacing are
 checked on screen and in Inkscape; calibrate them on a print before relying on them.
+
+### Upgrading from v0.2.0
+
+- Copy the new `template/native_template.ifc` and run `scripts/install_style.py` again
+  (also with `--project-assets` for projects that already have drawings).
+- **`Kies` is now `Schuettung`.** In your own projects, materials with category `Kies`
+  that mean placed gravel (drainage layer, gravel bed) are changed to `Schuettung` in
+  Bonsai; `Kies` now stands for gravel as a soil type.
+- Dampfbremse, Unterdeckbahn and PE-Folie moved from `Abdichtung` to `Bahnen`; they are
+  drawn as before.
+- In the template, the GlobalIds of the material assignments (`IfcRelAssociatesMaterial`)
+  changed because new materials were added. GlobalIds of types are unchanged.
 
 ## Requirements
 
@@ -116,7 +134,7 @@ Tested with:
 
 - Blender 5.2.0 LTS
 - Bonsai 0.9.1 (unstable channel)
-- IfcOpenShell 0.9.1a261028
+- IfcOpenShell 0.9.1a261106
 
 ## Licences
 
