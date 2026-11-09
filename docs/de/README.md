@@ -48,7 +48,7 @@ Bonsai gibt es in zwei Fassungen: eine stabile im Erweiterungsverzeichnis von Bl
    ```
 
    Das Häkchen bei **Check for Updates on Startup** setzen und bestätigen.
-3. Oben links im Suchfeld „Bonsai“ eingeben und bei **Bonsai** auf **Install** klicken. Der Download ist groß und dauert einen Moment.
+3. Oben links im Suchfeld „Bonsai“ eingeben. Unter *Available* erscheinen **zwei Einträge „Bonsai“**: die tägliche Fassung aus dem eben angelegten Repository und die stabile aus extensions.blender.org. Beide sehen gleich aus. Klappen Sie sie mit dem Pfeil links vom Namen auf und klicken Sie bei dem Eintrag auf **Install**, bei dem unten unter *Repository* `raw.githubusercontent.com` steht (*Version* 0.9.1 oder höher), nicht `extensions.blender.org` (*Version* 0.9.0). Der Download ist groß und dauert einen Moment.
 4. Prüfen, dass beim installierten Bonsai als Repository `raw.githubusercontent.com` steht und nicht `extensions.blender.org`.
 5. Blender schließen und neu starten.
 
