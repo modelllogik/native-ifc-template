@@ -1,6 +1,6 @@
 # Anleitung für Ausbilder
 
-*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.3.0. Die Abschnitte zu Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
+*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.3.0. Die Abschnitte zu Vorbereitung, Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
 
 ## Worum es geht
 
@@ -13,11 +13,72 @@ Für die Arbeit mit der Vorlage sind keine Programmierkenntnisse nötig. Für di
 Sie ist gelungen, wenn Sie **ohne Rückfrage** eine eigene Schraffur oder einen eigenen Schichtaufbau ergänzen können.
 Wenn das nicht klappt, ist die Anleitung unvollständig. Bitte melden Sie die Stelle als Issue, gern auf Deutsch.
 
+## 0 · Vorbereitung: Blender und Bonsai
+
+Diese Anleitung setzt zwei Programme voraus. Beide sind kostenlos und quelloffen und laufen unter Windows, macOS und Linux.
+
+- **[Blender](https://www.blender.org)** ist ein 3D-Programm, ursprünglich für Animation und Visualisierung.
+- **[Bonsai](https://bonsaibim.org)** ist eine Erweiterung für Blender. Sie macht aus Blender ein BIM-Programm, das IFC-Dateien direkt öffnet, bearbeitet und speichert. Dahinter steht die Bibliothek IfcOpenShell.
+
+Gearbeitet wird also immer in Blender, mit eingeschaltetem Bonsai. Die Oberfläche ist englisch; lassen Sie Blender auf Englisch, dann passen die Menünamen dieser Anleitung und der Bonsai-Dokumentation.
+
+**Was Sie brauchen:** einen Rechner, der die [Anforderungen von Blender](https://www.blender.org/download/requirements/) erfüllt, eine Maus mit Mausrad und Internetzugang für die Installation der Erweiterungen. Administratorrechte sind nicht nötig, wenn Sie die portable Fassung nehmen (Schritt 1).
+
+### Schritt 1 · Blender installieren
+
+1. Auf [blender.org/download](https://www.blender.org/download/) die Fassung **Blender 5.2 LTS** laden. LTS heißt Langzeitfassung; sie wird bis Juli 2028 gepflegt.
+2. Unter Windows gibt es zwei Wege:
+   - **Installer (.msi):** ausführen wie jedes Programm. Braucht Administratorrechte.
+   - **Portable (.zip):** in einen eigenen Ordner entpacken, etwa einen Ordner `Blender` unter *Dokumente*, und dort `blender.exe` starten. Geht ohne Administratorrechte, zum Beispiel im Schulungsraum.
+3. Blender starten. Der Begrüßungsbildschirm kann mit einem Klick daneben geschlossen werden.
+
+### Schritt 2 · Online-Zugang für Erweiterungen erlauben
+
+*Edit → Preferences → Get Extensions* öffnen und **Allow Online Access** drücken. Ohne diese Freigabe findet Blender keine Erweiterungen im Internet.
+
+### Schritt 3 · Bonsai installieren
+
+Bonsai gibt es in zwei Fassungen: eine stabile im Erweiterungsverzeichnis von Blender und eine tägliche Entwicklerfassung (*Unstable*). **Vorlage und Zeichenstil sind mit der täglichen Fassung erprobt** (Bonsai 0.9.1), deshalb beschreibt diese Anleitung diese. Die stabile Fassung 0.9.0 ist mit der Vorlage nicht erprobt.
+
+1. In *Edit → Preferences → Get Extensions* oben rechts **Repositories** aufklappen, auf **+** klicken und **Add Remote Repository** wählen.
+2. Als *URL* eintragen:
+
+   ```
+   https://raw.githubusercontent.com/IfcOpenShell/bonsai_unstable_repo/main/index.json
+   ```
+
+   Das Häkchen bei **Check for Updates on Startup** setzen und bestätigen.
+3. Oben links im Suchfeld „Bonsai“ eingeben und bei **Bonsai** auf **Install** klicken. Der Download ist groß und dauert einen Moment.
+4. Prüfen, dass beim installierten Bonsai als Repository `raw.githubusercontent.com` steht und nicht `extensions.blender.org`.
+5. Blender schließen und neu starten.
+
+So steht es auch in der [Installationsanleitung von Bonsai](https://docs-unstable.bonsaibim.org/guides/development/installation.html), Abschnitt *Unstable installation*.
+
+### Schritt 4 · Prüfen, ob alles läuft
+
+Im Menü **File** gibt es jetzt Einträge für IFC-Projekte, etwa *Open IFC Project*. Ist das so, ist Bonsai eingeschaltet. Fehlt der Eintrag: *Edit → Preferences → Add-ons*, nach „Bonsai“ suchen und das Häkchen setzen. Dort steht auch die Versionsnummer, die Sie bei Rückfragen angeben.
+
+### Aktualisieren
+
+Die tägliche Fassung erscheint jeden Tag neu. Mit dem Häkchen aus Schritt 3 meldet Blender beim Start unten rechts in der Statusleiste, wenn es eine neue gibt. Aktualisiert wird in *Edit → Preferences → Get Extensions* mit dem Knopf *Update*, danach Blender neu starten. Eine neue Fassung kann etwas anders machen als die vorige: **Aktualisieren Sie nicht unmittelbar vor dem Unterricht**, sondern prüfen Sie vorher in Ruhe, ob Vorlage und Zeichnungen noch wie gewohnt funktionieren.
+
+### Die ersten Handgriffe in Blender
+
+Blender bedient sich anders als ein CAD-Programm. Für den Anfang genügen diese Griffe im 3D-Fenster:
+
+- **Mittlere Maustaste gedrückt halten und ziehen:** Ansicht drehen.
+- **Umschalt + mittlere Maustaste:** Ansicht verschieben.
+- **Mausrad:** zoomen.
+- **Taste N:** Seitenleiste ein- und ausblenden. Dort liegen die Reiter von Bonsai und Add-ons.
+- **Ziffernblock 7 / 1 / 3:** Blick von oben, von vorn, von rechts.
+
+Weiterführend: die [Dokumentation von Bonsai](https://docs.bonsaibim.org) und das [Handbuch von Blender](https://docs.blender.org/manual/). Fragen zu Bonsai beantwortet die Gemeinschaft im [OSArch-Forum](https://community.osarch.org) (englisch).
+
 ## 1 · Installation
 
 Erprobt mit Blender 5.2.0 LTS, Bonsai 0.9.1 und IfcOpenShell 0.9.1a261106.
 
-1. Blender installieren, darin Bonsai über *Edit → Preferences → Get Extensions*.
+1. Blender und Bonsai installieren wie in Abschnitt 0 beschrieben.
 2. In den Einstellungen von Bonsai den **Datenordner** nachsehen (*Data Dir*). Unter Windows ist es `%APPDATA%\bonsai\bonsai\data`.
 3. `template/native_template.ifc` nach `<Datenordner>/templates/projects/` kopieren.
 4. Den Zeichenstil installieren (Abschnitt 3).
