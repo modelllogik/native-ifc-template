@@ -1,6 +1,6 @@
 # Anleitung für Ausbilder
 
-*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.3.0. Die Abschnitte zu Vorbereitung, Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
+*Deutsche Anleitung zu `native-ifc-template`. Stand: v0.4.0. Die Abschnitte zu Vorbereitung, Installation, Zeichenstil, Schraffur und Plankopf sind ausgeführt, die übrigen folgen mit späteren Releases.*
 
 ## Worum es geht
 
@@ -117,6 +117,8 @@ Das Skript **ersetzt Bonsais Dateien nicht**. Es hängt `din.css` an Bonsais `de
 **Was diese Fassung noch nicht kann:** Schraffuren als echte Linien für den Druck, das Holzkreuz, das Band der Abdichtung, Maßzahlen in deutscher Schreibweise und Maßlinienmarker. Dafür braucht es eine Nachbearbeitung der Zeichnung; sie entsteht im Add-on [bonsai-btk](https://github.com/modelllogik/bonsai-btk). **Linienstärken und Musterabstände vor dem Einsatz an einem Ausdruck prüfen**, nicht am Bildschirm.
 
 **Von v0.2.0 auf v0.3.0:** die neue `native_template.ifc` kopieren und `install_style.py` erneut ausführen, bei Projekten mit Zeichnungen auch mit `--project-assets`. Die Kategorie `Kies` heißt jetzt **`Schuettung`**; `Kies` steht für die Bodenart. Eigene Materialien mit der Kategorie `Kies`, die eingebauten Kies meinen (Dränschicht, Kiesbett), in Bonsai auf `Schuettung` umstellen.
+
+**Von v0.3.0 auf v0.4.0:** die neue `native_template.ifc` kopieren und `install_style.py` erneut ausführen, bei Projekten mit Zeichnungen auch mit `--project-assets`, denn `din.css` hat sich geändert. Schichten aus Stahl und Metall (Bleche) werden nur noch umrandet und nicht mehr schwarz gefüllt. Profile werden schwarz, wenn die Zeichnung `EPset_Drawing.Metadata` = `material.Category` trägt. Bekleidungen wie Fußbodenaufbau, Putz und Dachschräge verlieren den breiten Umriss und erscheinen ab 1:100 als eine Fläche. Neu sind zwölf Typen, darunter Fundamente, Treppe, Geländer und Dachrinne; vorhandene Typen behalten ihre GlobalId. Ein Mustermodell, in dem jede Typfamilie vorkommt, liegt in `examples/`.
 
 ## 4 · Eine Schraffur ergänzen
 

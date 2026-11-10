@@ -12,7 +12,8 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 path = [
   "template/**/*.ifc",
   "style/**",
-  "examples/**",
+  "examples/**/*.ifc",
+  "examples/**/*.md",
   "ids/**",
   "docs/**",
   "README.md",

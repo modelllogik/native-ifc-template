@@ -14,7 +14,9 @@ What the template contains:
   - door and window types (parametric as in Bonsai), each in timber and PVC
   - annotation types for level markers
   - profile types: timber by structural role (rafter, purlin, collar, column,
-    beam; solid and glued laminated timber), steel IPE/HEA/HEB as beam and column
+    beam; solid and glued laminated timber), steel IPE/HEA/HEB as beam and column,
+    strip and pad footings
+  - a straight stair flight type and a landing
   - all types in an IfcProjectLibrary, so the file also works as a library
 
 Deliberately NOT included:
@@ -55,8 +57,8 @@ import ifcopenshell.api.unit
 import ifcopenshell.guid
 import ifcopenshell.util.shape_builder
 
-VERSION = "0.3.0"
-TIMESTAMP = "2026-11-09T00:00:00"
+VERSION = "0.4.0"
+TIMESTAMP = "2026-11-10T00:00:00"
 
 # ---------------------------------------------------------------------------
 # DATA - maintained here
@@ -193,6 +195,10 @@ TYPES = [
     ("Terrassenbelag Holz 4", "IfcSlabType", "FLOOR",
      {"IsExternal": True, "LoadBearing": False}, None,
      [("Nadelholz C24", 0.04)]),
+    # stair landing: like a floor slab, thickness = waist of the flight
+    ("Podest STB 16", "IfcSlabType", "LANDING",
+     {"IsExternal": False, "LoadBearing": True}, None,
+     [("Stahlbeton", 0.16)]),
     # Floor build-up 15 cm, bottom to top; the top layer is the finish shown in the
     # room stamp. PE film 0.1 mm below the screed (exaggerated on the sheet); turned
     # up at the edges only in detail drawings, not modelled here.
@@ -226,6 +232,19 @@ TYPES = [
     ("Sockelputz 1", "IfcCoveringType", "CLADDING",
      {"IsExternal": True}, "AXIS2",
      [("Sockelputz", 0.01)]),
+    # insulation between the rafters, one element per rafter bay; thickness = rafter
+    # depth, layers perpendicular to the roof plane
+    ("Zwischensparrendämmung 20", "IfcCoveringType", "INSULATION",
+     {"IsExternal": False}, None,
+     [("Mineralwolle", 0.20)]),
+    # damp-proof membrane below a wall plate (foot purlin on the knee wall)
+    ("Bitumenbahn 0,3", "IfcCoveringType", "MEMBRANE",
+     {"IsExternal": False}, None,
+     [("Bitumenbahn", 0.003)]),
+    # ceiling below the collar beams: the same build-up as the sloped lining
+    ("Decke GK 2 × 12,5", "IfcCoveringType", "CEILING",
+     {"IsExternal": False}, None,
+     [("Gipskartonplatte", 0.0125), ("Gipskartonplatte", 0.0125), ("Nadelholz C24", 0.024), ("Dampfbremse", 0.0002)]),
     # lining of the sloped ceiling below the rafters, a covering of the room;
     # bottom to top: plasterboard 2 x 12.5, battens 2.4, vapour barrier 0.2 mm (assumed)
     ("Dachschräge GK 2 × 12,5", "IfcCoveringType", "CEILING",
@@ -264,6 +283,45 @@ TIMBER_ROLES = [
      [(6, 18), (6, 20), (6, 24), (8, 16), (8, 20), (8, 24), (10, 20), (12, 20), (12, 24)]),
     ("Balken", "IfcBeamType", "JOIST", BSH, "BSH", BSH_SIZES),
 ]
+# Footings as profile types: a strip footing is an axis with a cross-section width/height
+# (like a beam), a pad footing a vertical extrusion of its plan (like a column, length =
+# depth). Dimensions assumed.
+# (name, IFC class, PredefinedType, material, (b, h) cm)
+FOOTINGS = [
+    ("Streifenfundament 50/80", "IfcFootingType", "STRIP_FOOTING", "Beton C25/30", (50, 80)),
+    ("Einzelfundament 60/60", "IfcFootingType", "PAD_FOOTING", "Beton C25/30", (60, 60)),
+]
+# Stair flights: the type carries the material only; geometry (riser, tread, number of
+# risers) belongs to the occurrence, Pset_StairFlightCommon. Waist 16 cm like the landing.
+STAIR_FLIGHTS = [
+    ("Treppenlauf STB 16", "IfcStairFlightType", "STRAIGHT", "Stahlbeton", 0.16),
+]
+# Elements of one material whose shape belongs to the occurrence (bent sheet, pipe run,
+# stair assembly). (name, IFC class, PredefinedType, ElementType for USERDEFINED or None,
+# material, description, Pset_*Common {..})
+SINGLE_MATERIAL = [
+    ("Fensterblech Aluminium", "IfcCoveringType", "USERDEFINED", "Fensterblech", "Aluminium",
+     "Außenfensterbank 2 mm mit Tropfkante und Bordprofilen; Breite, Ausladung und Gefälle am Bauteil",
+     {"IsExternal": True}),
+    ("Dachrinne halbrund NG 333 Kupfer", "IfcPipeSegmentType", "GUTTER", None, "Kupfer",
+     "Hängerinne, Nenngröße 333 (Durchmesser 153 mm); Länge am Bauteil", {}),
+    ("Fallrohr DN 100 Kupfer", "IfcPipeSegmentType", "RIGIDSEGMENT", None, "Kupfer",
+     "Regenfallrohr mit Bogen; Verlauf am Bauteil", {}),
+    ("Treppe STB gerade", "IfcStairType", "STRAIGHT_RUN_STAIR", None, "Stahlbeton",
+     "Baugruppe aus geraden Läufen (mit Zwischenpodest, wo nötig)", {}),
+    # Railing generated from a line (the occurrence's Axis): posts, handrail, bottom rail
+    # and vertical bars. Height 0.90: minimum for falls up to 12 m in the German model
+    # building code; bars at most 12 cm apart. Parameters in EPset_Railing (assumed).
+    ("Geländer Stahl 90", "IfcRailingType", "GUARDRAIL", None, "Stahl verzinkt",
+     "Geländer aus einer Achse: Pfosten 40 × 40, Handlauf Ø 42,4, Untergurt Ø 20, Stäbe Ø 14; Verlauf am Bauteil",
+     {"Height": 0.90, "Diameter": 0.0424}),
+]
+# generator parameters of railing types (read by examples/build_example.py)
+RAILING_PARAMETERS = {
+    "Geländer Stahl 90": {"Height": 0.90, "PostSize": 0.04, "PostSpacingMax": 1.20, "HandrailDiameter": 0.0424,
+                          "BottomRailDiameter": 0.02, "BottomRailHeight": 0.06, "BarDiameter": 0.014,
+                          "BarClearMax": 0.12},
+}
 # Steel: dimensions read from Bonsai's "IFC4 EU Steel.ifc" (IfcOpenShell 0.9.1a261027),
 # in mm: width, depth, web, flange, fillet radius. Each section as beam and as column.
 STEEL_ROLES = [("Träger", "IfcBeamType", "BEAM"), ("Stütze", "IfcColumnType", "COLUMN")]
@@ -380,9 +438,14 @@ DOOR_PANEL = {"panel_depth": 0.035, "panel_width_ratio": 1.0}
 # Bonsai then puts the casing on both wall faces (add_door_representation.py,
 # lines 542-557, IfcOpenShell 0.9.1); the leaf sits 2.5 cm from the opening side as
 # in Bonsai's default. Wall thicknesses come from TYPES - a new internal wall type
-# brings its own door set.
-INTERNAL_WALLS = [(n.split()[-1], round(sum(d for _, d in s), 4)) for n, k, _, c, _, s in TYPES
-                  if k == "IfcWallType" and not c["IsExternal"]]
+# brings its own door set. Masonry walls are plastered on both faces, so their frame is
+# two plaster thicknesses deeper than the wall (the reveal itself is not plastered: the
+# frame covers it). Drywall and timber stud walls are not plastered.
+PLASTER = 0.015                     # type "Innenputz 1,5"
+_CATEGORY = {m[0]: m[1] for m in MATERIALS}
+INTERNAL_WALLS = [(n.split()[-1], round(sum(d for _, d in s), 4),
+                   round(sum(d for _, d in s) + (2 * PLASTER if any(_CATEGORY[m] == "Mauerwerk" for m, _ in s) else 0.0), 4))
+                  for n, k, _, c, _, s in TYPES if k == "IfcWallType" and not c["IsExternal"]]
 WINDOW_LINING = {"lining_depth": 0.05, "lining_thickness": 0.05, "lining_offset": 0.05,
                  "lining_to_panel_offset_x": 0.025, "lining_to_panel_offset_y": 0.025}
 WINDOW_PANEL = {"frame_depth": [0.035, 0.035, 0.035], "frame_thickness": [0.035, 0.035, 0.035]}
@@ -448,6 +511,32 @@ def lift(f, r, c, b, h, part, lining):
     elif c.ContextIdentifier == "Profile":
         line = sb.polyline([(0.0, 0.0, 0.0), (b, 0.0, 0.0), (b, 0.0, h), (0.0, 0.0, h)], closed=True)
         r.Items = [line]
+
+
+def add_swing(f, r, c, operation, b, hb, lining):
+    """French window: put the swing arc and the open leaf of a Bonsai door into the
+    window's plan representation (a French window needs a swing in the plan; the rest
+    stays a window: glass and sash). Bonsai's door plan (add_door_representation,
+    PLAN_VIEW): linings as 6-point polylines, arc as IfcTrimmedCurve, open leaf as a
+    4-point polyline - arc and leaf are taken over."""
+    if not (c.ContextType == "Plan" and c.ContextIdentifier == "Body"):
+        return
+    door_lining = {"LiningDepth": lining["LiningDepth"], "LiningThickness": lining["LiningThickness"],
+                   "LiningOffset": lining["LiningOffset"], "LiningToPanelOffsetX": lining["LiningToPanelOffsetX"],
+                   "LiningToPanelOffsetY": lining["LiningToPanelOffsetY"], "TransomThickness": 0.0,
+                   "CasingThickness": 0.0, "CasingDepth": 0.0, "ThresholdThickness": 0.0,
+                   "ThresholdDepth": lining["LiningDepth"], "ThresholdOffset": lining["LiningOffset"]}
+    d = api.geometry.add_door_representation(
+        f, context=c, operation_type=operation, overall_height=hb, overall_width=b,
+        lining_properties=door_lining, panel_properties={"PanelDepth": WINDOW_PANEL["frame_depth"][0],
+                                                         "PanelWidth": 1.0, "FrameDepth": 0.035, "FrameThickness": 0.035})
+
+    def leaf(item):
+        return item.is_a("IfcIndexedPolyCurve") and item.Segments and len(item.Segments[0].wrappedValue) == 5
+    take = [item for item in d.Items if item.is_a("IfcTrimmedCurve") or leaf(item)]
+    d.Items = [item for item in d.Items if item not in take]
+    r.Items = list(r.Items) + take
+    api.geometry.remove_representation(f, representation=d)
 
 
 def place(f, product, z):
@@ -547,7 +636,7 @@ def build():
         types.append(t)
 
     for pattern, b, h, external, fanlight in DOORS:
-        for wall, wall_thickness in ([(None, None)] if external else INTERNAL_WALLS):
+        for wall, wall_thickness, frame_depth in ([(None, None, None)] if external else INTERNAL_WALLS):
             for side, operation in DIN_SIDE.items():
                 for a, (frame, leaf, glass) in FINISHES.items():
                     name = pattern.format(a=a) + (f" Wand {wall}" if wall else "") + " " + side
@@ -556,6 +645,8 @@ def build():
                     t.Description = f"Rohbau {b:.3f} x {h:.3f} ab OKRF, Blatt auf OKFF (Schwelle {THRESHOLD:.2f})"
                     if wall:
                         t.Description += f", Umfassungszarge für Wand {wall}"
+                        if frame_depth != wall_thickness:
+                            t.Description += (", Zargenmaß %s cm (Wand und Putz)" % f"{frame_depth * 100:.1f}".replace(".", ","))
                     lining = dict(DOOR_LINING)
                     lining["threshold_thickness"] = THRESHOLD
                     if external:  # frame on the boundary masonry/insulation, no casing
@@ -563,10 +654,10 @@ def build():
                         lining["lining_offset"] = FRAME_OFFSET
                         lining["casing_thickness"] = 0.0
                         lining["casing_depth"] = 0.0
-                    else:  # wrap-around frame in wall thickness, leaf on the opening side
-                        lining["lining_depth"] = wall_thickness
+                    else:  # wrap-around frame in wall (+ plaster) thickness, leaf on the opening side
+                        lining["lining_depth"] = frame_depth
                         lining["lining_to_panel_offset_y"] = round(
-                            wall_thickness - (DOOR_LINING["lining_depth"] - DOOR_LINING["lining_to_panel_offset_y"]), 4)
+                            frame_depth - (DOOR_LINING["lining_depth"] - DOOR_LINING["lining_to_panel_offset_y"]), 4)
                     lining["threshold_depth"] = lining["lining_depth"]   # threshold only in frame depth
                     lining["threshold_offset"] = lining["lining_offset"]  # Bonsai measures from the door origin, not the frame
                     if fanlight:
@@ -630,6 +721,8 @@ def build():
                     lining_properties=lining, panel_properties=panels, part_of_product=part)
                 if on_okff:
                     lift(f, r, c, b, h, part, lining)
+                    if t.OperationType != "NOTDEFINED":      # French window, not the side panel
+                        add_swing(f, r, c, t.OperationType, b, hb, lining)
                 return r
             represent(f, t, contexts, make)
             parts = {"Lining": mat[frame], "Framing": mat[sash], "Glazing": mat[glass]}
@@ -676,6 +769,27 @@ def build():
             "FilletRadius": round(r / 1000, 5)})
         for role, ifc_class, predefined in STEEL_ROLES:
             profile_type(f"{role} {pname} {MATERIAL_SHORT[STEEL]}", ifc_class, predefined, STEEL, prof)
+    for name, ifc_class, predefined, material, (b, h) in FOOTINGS:
+        prof = section(f"Fundament {b}/{h}", "IfcRectangleProfileDef",
+                       {"XDim": round(b / 100, 4), "YDim": round(h / 100, 4)})
+        profile_type(name, ifc_class, predefined, material, prof)
+    for name, ifc_class, predefined, material, waist in STAIR_FLIGHTS:
+        t = new(f, ifc_class, "type/" + name, name=name, predefined_type=predefined)
+        t.Description = f"Laufplatte {waist:.2f}; Steigung, Auftritt und Stufenzahl am Bauteil (Pset_StairFlightCommon)"
+        api.material.assign_material(f, products=[t], type="IfcMaterial", material=mat[material])
+        types.append(t)
+
+    for name, ifc_class, predefined, element_type, material, description, common in SINGLE_MATERIAL:
+        t = new(f, ifc_class, "type/" + name, name=name, predefined_type=predefined)
+        if element_type:
+            t.ElementType = element_type
+        t.Description = description
+        api.material.assign_material(f, products=[t], type="IfcMaterial", material=mat[material])
+        if common:
+            pset(f, t, "Pset_" + ifc_class[3:-4] + "Common", common, "pset/type/" + name)
+        if name in RAILING_PARAMETERS:
+            pset(f, t, "EPset_Railing", RAILING_PARAMETERS[name], "epset/type/" + name)
+        types.append(t)
 
     for name, applicable, classes in ANNOTATION_TYPES:
         t = new(f, "IfcTypeProduct", "annot/" + name, name=name)
@@ -706,6 +820,8 @@ def build():
         r.RelatedObjects = sorted(r.RelatedObjects, key=order)
     for r in f.by_type("IfcRelDeclares"):
         r.RelatedDefinitions = sorted(r.RelatedDefinitions, key=lambda x: x.id())
+    for r in f.by_type("IfcRelAssociatesMaterial"):   # one material on several types
+        r.RelatedObjects = sorted(r.RelatedObjects, key=lambda x: x.id())
     for u in f.by_type("IfcUnitAssignment"):
         u.Units = sorted(u.Units, key=lambda x: x.id())
 

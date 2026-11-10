@@ -4,11 +4,15 @@
 
 *Modelllogik is German for model logic.*
 
-> **Status: v0.3.0.** The material categories are reworked and described in German and
-> English in [`docs/material-categories.md`](docs/material-categories.md): a new category
-> for membranes and foils, soil types below `Erdreich`, and `Kies` renamed to `Schuettung`
-> ([upgrading](#upgrading-from-v020)). v0.2.0 added the drawing style after DIN 1356-1,
-> v0.1.0 the IFC project template. A neutral example model and an IDS follow; the
+> **Status: v0.4.0.** A neutral example house in [`examples/`](examples/README.md) uses
+> every type family of the template and doubles as a test model. The template now has
+> 246 types: new are strip and pad footings, a stair flight, a straight stair, a landing,
+> rafter insulation, a bitumen membrane, a ceiling lining, a window sill, a gutter, a
+> downpipe and a railing; French windows show their swing in the plan. The drawing style
+> outlines steel and metal layers instead of filling them black and draws coverings as
+> one area from 1:100 ([upgrading](#upgrading-from-v030)). v0.3.0 reworked the
+> [material categories](docs/material-categories.md), v0.2.0 added the drawing style
+> after DIN 1356-1, v0.1.0 the IFC project template. An IDS follows; the
 > post-processing of drawings is developed in
 > [bonsai-btk](https://github.com/modelllogik/bonsai-btk).
 
@@ -35,7 +39,7 @@ want to use native IFC in vocational training.
 |---|---|---|
 | `template/` | The IFC project template and the script that builds it | code GPL-3.0-or-later, template CC BY 4.0 |
 | `style/` | Drawing style: CSS, hatch patterns, title blocks A4 to A0 | CC BY 4.0 |
-| `examples/` | A neutral example model and the drawing set derived from it | CC BY 4.0 |
+| `examples/` | A neutral example house that uses every type family of the template, also a test model | model CC BY 4.0, script GPL-3.0-or-later |
 | `ids/` | Information Delivery Specification (IDS) to check models against the template | CC BY 4.0 |
 | `scripts/` | Helpers for building, checking and deriving drawings | GPL-3.0-or-later |
 | `docs/` | Documentation; `docs/de/` is a German guide for trainers | CC BY 4.0 |
@@ -52,13 +56,22 @@ The template is ready to use: [`template/native_template.ifc`](template/native_t
 **Note for Bonsai 0.9.1:** after *New Project* with this template, save the project and open it again. Until then the style editor fails and door or window types cannot be placed ([#10134](https://github.com/IfcOpenShell/IfcOpenShell/issues/10134)).
 
 What is inside: storeys KG, EG, OG and DG with their levels, 47 materials in 28
-categories ([list](docs/material-categories.md)) with colours, and 234 types (layered walls, slabs and coverings; doors and
-windows in timber and PVC; timber and steel profiles; level annotations), all in an
-`IfcProjectLibrary`. The template has no georeference on purpose; see the docstring of
+categories ([list](docs/material-categories.md)) with colours, and 246 types (layered walls, slabs and coverings; doors and
+windows in timber and PVC, French windows with a swing in the plan; timber and steel
+profiles; strip and pad footings; a stair flight, a landing and the stair assembly; window sill, gutter, downpipe and a railing generated from a line; level annotations),
+all in an `IfcProjectLibrary`. The template has no georeference on purpose; see the docstring of
 the build script.
 
 Names of types and materials are German: the template follows German building
 practice and the drawing conventions of DIN 1356.
+
+### Example house
+
+[`examples/example_house.ifc`](examples/example_house.ifc) is a plain, fictitious house
+with a gable roof, a stair and a carport, built from the template by
+[`examples/build_example.py`](examples/build_example.py). Every type family of the
+template occurs in it at least once, so it doubles as a test model; see
+[`examples/README.md`](examples/README.md).
 
 ### Building the template yourself
 
@@ -116,6 +129,22 @@ the drawing SVG; it is developed in [bonsai-btk](https://github.com/modelllogik/
 (see its roadmap). Line weights and pattern spacing are
 checked on screen and in Inkscape; calibrate them on a print before relying on them.
 
+### Upgrading from v0.3.0
+
+- Copy the new `template/native_template.ifc` and run `scripts/install_style.py` again
+  (also with `--project-assets` for projects that already have drawings): `din.css`
+  changed.
+- Steel and metal **layers** (sheet, plate) are outlined, no longer filled black. A
+  **profile** is filled black when the drawing carries `EPset_Drawing.Metadata` =
+  `material.Category` (rule 4b).
+- Coverings (floor build-ups, linings, plaster) no longer get an overall outline of
+  0.50; from 1:100 a covering is drawn as one area (rule 4d).
+- Rule 4c (line weight by construction, `EPset_Darstellung.Konstruktion = Ausbau`) is
+  prepared in `din.css`. The template does not carry the property yet, so the rule has
+  no effect so far.
+- Twelve types were added, none removed. GlobalIds of types, materials and storeys are
+  unchanged; those of the material assignments (`IfcRelAssociatesMaterial`) changed.
+
 ### Upgrading from v0.2.0
 
 - Copy the new `template/native_template.ifc` and run `scripts/install_style.py` again
@@ -134,7 +163,7 @@ Tested with:
 
 - Blender 5.2.0 LTS
 - Bonsai 0.9.1 (unstable channel)
-- IfcOpenShell 0.9.1a261106
+- IfcOpenShell 0.9.1a261108
 
 ## Licences
 
