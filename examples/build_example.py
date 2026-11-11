@@ -21,7 +21,18 @@ What it is:
   family "Stütze HEA S235". Doors are counted without their hinge side; for external and
   internal doors both hinge sides (DIN links, DIN rechts) have to occur. Internal doors
   keep their wall thickness ("Wand 17,5", "Wand 10", "Wand 15"). Annotation types (level
-  markers) are left out: they belong to drawings, which this script does not create.
+  markers) are left out of the check: the drawings below do not place any.
+
+Drawings and sheets:
+  The script also sets up a drawing set the way Bonsai stores one in the IFC: 19 drawings
+  (cameras as IfcAnnotation DRAWING with EPset_Drawing), each with its document, and one
+  sheet per drawing with layout and title block references. "E" is the design set (1:100,
+  site plan 1:500), "W" the working set (1:50). Plans leave out floor slabs, floor
+  build-ups and footings (EPset_Drawing.Exclude), so that the walls are cut, not the
+  floor; sections and elevations leave out the drawing cameras.
+  The SVG files themselves are not part of the IFC: Bonsai writes them when a drawing is
+  created, and the layout of a sheet when the sheets are loaded and its drawings exist
+  (see README.md).
 
 How it is built:
   Everything is placed in absolute coordinates (m). The interior of the house is
@@ -52,8 +63,10 @@ import numpy as np
 import ifcopenshell
 import ifcopenshell.api
 import ifcopenshell.api.aggregate
+import ifcopenshell.api.document
 import ifcopenshell.api.feature
 import ifcopenshell.api.geometry
+import ifcopenshell.api.group
 import ifcopenshell.api.material
 import ifcopenshell.api.pset
 import ifcopenshell.api.root
@@ -1071,8 +1084,118 @@ def build(template):
                     (9.9 + dx, float(y), 2.76 + 0.10), (1, 0, 0), (0, 1, 0), 3.2, "EG")
     md.flat("IfcSlab", "Dach Carport", "Dachaufbau 35", 9.8 + dx, -1.1, 13.2 + dx, 5.4, 2.96, "EG")
 
+    drawing_set(md)
     finish(md)
     return md
+
+
+# ---------------------------------------------------------------------------
+# DRAWING SET - as Bonsai keeps it in the IFC (cameras, documents, sheets)
+# ---------------------------------------------------------------------------
+# Bonsai's default resources, relative to the IFC; Bonsai copies them from its data dir
+# into the project when the first drawing is created (scripts/install_style.py puts
+# din.css there).
+RESOURCES = {
+    "Stylesheet": "drawings/assets/default.css",
+    "Markers": "drawings/assets/markers.svg",
+    "Symbols": "drawings/assets/symbols.svg",
+    "Patterns": "drawings/assets/patterns.svg",
+    "ShadingStyles": "drawings/assets/shading_styles.json",
+}
+PLAN_EXCLUDE = ('IfcSlab, PredefinedType="BASESLAB" + IfcSlab, PredefinedType="FLOOR" + '
+                'IfcCovering, PredefinedType="FLOORING" + IfcCovering, PredefinedType="INSULATION" + IfcFooting')
+CAMERA_EXCLUDE = 'IfcAnnotation, ObjectType="DRAWING"'
+PLAN_CUT = 1.60              # camera above OKRF of the storey, as Bonsai places a plan
+VIEW_CENTRE = (7.6, 2.2)     # house and carport
+TITLEBLOCK = {"E-01": "DIN_A4_hoch", "E": "DIN_A3_quer", "W": "DIN_A2_quer"}
+
+
+def drawing_views():
+    """The 19 drawings: (name, target view, scale, camera location, camera Z axis, camera X
+    axis, box (x, y, z, dx, dy, dz) in camera coordinates, Exclude, GlobalReferencing).
+    The camera looks along its -Z; the box is its view volume."""
+    cx, cy = VIEW_CENTRE
+    plan_box = (-12.0, -8.0, -2.0, 24.0, 16.0, 2.0)
+    views = []
+    for prefix, scale in (("E", 100), ("W", 50)):
+        if prefix == "E":
+            views.append(("E Lageplan", "PLAN_VIEW", 500, (0.0, 0.0, 30.0), (0, 0, 1), (1, 0, 0),
+                          (-40.0, -30.0, -40.0, 80.0, 60.0, 40.0), None, True))
+        for storey, z in (("KG", -3.15), ("EG", EG), ("OG", OG), ("DG", 5.85)):
+            views.append((f"{prefix} Grundriss {storey}", "PLAN_VIEW", scale, (cx, cy, round(z + PLAN_CUT, 3)),
+                          (0, 0, 1), (1, 0, 0), plan_box, PLAN_EXCLUDE, True))
+        # across the ridge, looking east, through the stair
+        views.append((f"{prefix} Schnitt A-A", "SECTION_VIEW", scale, (4.7, 3.2, 3.0), (-1, 0, 0), (0, -1, 0),
+                      (-10.0, -8.0, -20.0, 20.0, 16.0, 20.0), CAMERA_EXCLUDE, prefix == "E"))
+        for side, loc, axis, ref in (("Nord", (cx, 20.0, 3.0), (0, 1, 0), (-1, 0, 0)),
+                                     ("Ost", (20.0, cy, 3.0), (1, 0, 0), (0, 1, 0)),
+                                     ("Süd", (cx, -20.0, 3.0), (0, -1, 0), (1, 0, 0)),
+                                     ("West", (-20.0, cy, 3.0), (-1, 0, 0), (0, -1, 0))):
+            views.append((f"{prefix} Ansicht {side}", "ELEVATION_VIEW", scale, loc, axis, ref,
+                          (-12.0, -8.0, -40.0, 24.0, 16.0, 40.0), CAMERA_EXCLUDE, False))
+    return views
+
+
+def _sorted_documents(f):
+    """add_information collects the documents of a parent in a set - sort them."""
+    for rel in f.by_type("IfcDocumentInformationRelationship"):
+        rel.RelatedDocuments = sorted(rel.RelatedDocuments, key=lambda x: x.id())
+
+
+def drawing_set(md):
+    f = md.f
+    project = f.by_type("IfcProject")[0]
+    doc = api.document
+    parent_doc = doc.add_information(f)
+    doc.edit_information(f, information=parent_doc,
+                         attributes={"Identification": "DRAWINGS", "Name": "DRAWINGS", "Scope": "DRAWINGS"})
+    parent_group = api.group.add_group(f, name="DRAWINGS")
+    parent_group.ObjectType = "DRAWINGS"
+    groups, drawings = [], []
+    for name, target, scale, loc, axis, ref, box, exclude, global_ref in drawing_views():
+        e = api.root.create_entity(f, ifc_class="IfcAnnotation", name=name)
+        e.ObjectType = "DRAWING"
+        api.geometry.edit_object_placement(f, product=e, matrix=frame(loc, ref, axis), is_si=True)
+        x, y, z, dx, dy, dz = box
+        block = f.createIfcBlock(f.createIfcAxis2Placement3D(f.createIfcCartesianPoint((x, y, z))), dx, dy, dz)
+        rep = f.createIfcShapeRepresentation(md.body, "Body", "CSG", [f.createIfcCsgSolid(block)])
+        api.geometry.assign_representation(f, product=e, representation=rep)
+        group = api.group.add_group(f, name=name)
+        group.ObjectType = "DRAWING"
+        api.group.assign_group(f, products=[e], group=group)
+        groups.append(group)
+        props = {"TargetView": target, "Scale": f"1/{scale}", "HumanScale": f"1:{scale}",
+                 "HasUnderlay": False, "HasLinework": True, "HasAnnotation": True,
+                 "GlobalReferencing": global_ref, **RESOURCES, "CurrentShadingStyle": "Blender Default"}
+        if exclude:
+            props["Exclude"] = exclude
+        pset = api.pset.add_pset(f, product=e, name="EPset_Drawing")
+        api.pset.edit_pset(f, pset=pset, properties=props)
+        info = doc.add_information(f, parent=parent_doc)
+        doc.edit_information(f, information=info, attributes={"Identification": "X", "Name": name, "Scope": "DRAWING"})
+        reference = doc.add_reference(f, information=info)
+        doc.edit_reference(f, reference=reference, attributes={"Location": f"drawings/{name}.svg"})
+        doc.assign_document(f, products=[e], document=reference)
+        drawings.append(name)
+    api.group.assign_group(f, products=groups, group=parent_group)
+
+    # one sheet per drawing: E-01 site plan, E-02 ... design set, W-01 ... working set
+    counters = {"E": 0, "W": 0}
+    for name in drawings:
+        prefix, title = name.split(" ", 1)
+        counters[prefix] += 1
+        ident = f"{prefix}-{counters[prefix]:02d}"
+        sheet = doc.add_information(f)
+        doc.edit_information(f, information=sheet, attributes={"Identification": ident, "Name": title, "Scope": "SHEET"})
+        block_name = TITLEBLOCK.get(ident, TITLEBLOCK[prefix])
+        for location, description, identification in (
+                (f"layouts/{ident} - {title}.svg", "LAYOUT", "X"),
+                (f"layouts/titleblocks/{block_name}.svg", "TITLEBLOCK", "X"),
+                (f"drawings/{name}.svg", "DRAWING", "1")):
+            r = doc.add_reference(f, information=sheet)
+            doc.edit_reference(f, reference=r, attributes={"Identification": identification, "Location": location,
+                                                           "Description": description})
+    _sorted_documents(f)
 
 
 def _across(direction):
@@ -1150,6 +1273,9 @@ if __name__ == "__main__":
     wanted, have, missing = coverage(model)
     print(f"written: {sys.argv[2]} ({len(list(model.f))} entities, version {VERSION})")
     print(f"type families: {len(wanted)}, used: {len(wanted) - len([m for m in missing if m in wanted])}")
+    sheets = [d for d in model.f.by_type("IfcDocumentInformation") if d.Scope == "SHEET"]
+    print(f"drawings: {sum(1 for a in model.f.by_type('IfcAnnotation') if a.ObjectType == 'DRAWING')}, "
+          f"sheets: {len(sheets)}")
     for m in missing:
         print("  MISSING:", m)
     sys.exit(1 if missing else 0)

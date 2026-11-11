@@ -33,10 +33,40 @@ doors for all three partition thicknesses and both hinge sides (DIN links, DIN r
 
 Every element is an occurrence of a template type, including the stair assembly, the
 window sills, the gutters and the downpipes. Annotation types (level markers) are not used:
-they belong to drawings.
+they belong to annotations in drawings, and the drawings below have none yet.
 
 The roof, the eaves, the plinth and the opening details follow a worked reference house;
 only the construction is taken over, no data of that house.
+
+## Drawings and sheets
+
+The model carries a drawing set the way Bonsai keeps it in the IFC: 19 drawings, each a
+camera (`IfcAnnotation` DRAWING with `EPset_Drawing`) with its document, and one sheet
+per drawing.
+
+| Set | Drawings | Scale | Sheets |
+|---|---|---|---|
+| E, design | site plan; plans KG, EG, OG, DG; section A-A; elevations north, east, south, west | site plan 1:500, the others 1:100 | E-01 (A4 portrait), E-02 to E-10 (A3 landscape) |
+| W, working | plans KG, EG, OG, DG; section A-A; elevations | 1:50 | W-01 to W-09 (A2 landscape) |
+
+The plans leave out the ground slab, the floor slabs, floor build-ups, floor insulation
+and footings (`EPset_Drawing.Exclude`), so that a plan shows the cut walls and not the
+floor below them. Sections and elevations leave out the cameras of the other drawings.
+Section A-A runs across the ridge, through the stair, looking east.
+
+The SVG files are not part of the IFC; Bonsai writes them next to it:
+
+1. Install the drawing style and the title blocks into Bonsai's data dir
+   (`scripts/install_style.py --data-dir …`, see the main README).
+2. Open `example_house.ifc`, activate a drawing and choose *Create Drawing*. Bonsai writes
+   `drawings/<name>.svg` and copies the style into `drawings/assets/`.
+3. Load the sheets. Bonsai writes the layout of every sheet whose drawing exists
+   (`layouts/`); *Create Sheets* then builds the sheet (`sheets/`).
+
+With [bonsai-btk](https://github.com/modelllogik/bonsai-btk), *Update Sheet* does steps 2
+and 3 for the selected sheet in one go, with the post-processing, the legend and the
+north arrow. The folders `drawings/`, `layouts/` and `sheets/` are generated and not part
+of the repository.
 
 ## Building it yourself
 
@@ -53,6 +83,15 @@ missing ones (exit code 1). A family is a type name without its dimensions:
 template, the check tells you that the example needs it too.
 
 ## Known simplifications
+
+- Bonsai places a drawing at its default position on the sheet, 30 mm from the top left
+  corner. Move it in Bonsai's layout or in the browser preview of bonsai-btk.
+- The external walls have layer priorities at the corners (masonry butt-jointed, ETICS
+  wrapping round). IfcOpenShell 0.9 cannot regenerate such a wall
+  ([#10054](https://github.com/IfcOpenShell/IfcOpenShell/issues/10054), fix proposed in
+  [PR #10071](https://github.com/IfcOpenShell/IfcOpenShell/pull/10071)). `build_example.py`
+  applies the proposed one-line fix to itself. In Bonsai, moving or editing one of these
+  walls fails with a `TypeError` until the fix is released; drawing them is not affected.
 
 - Rafters end in plumb cuts at the eaves and the ridge.
 - Internal doors in plastered masonry have a frame two plaster thicknesses deeper than the

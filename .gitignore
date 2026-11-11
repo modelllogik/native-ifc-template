@@ -15,6 +15,9 @@ venv/
 # Generated output (drawing sets are rebuilt from the model)
 build/
 out/
+examples/drawings/
+examples/layouts/
+examples/sheets/
 
 # OS / editor
 .DS_Store

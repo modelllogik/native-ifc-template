@@ -120,6 +120,15 @@ Das Skript **ersetzt Bonsais Dateien nicht**. Es hängt `din.css` an Bonsais `de
 
 **Von v0.3.0 auf v0.4.0:** die neue `native_template.ifc` kopieren und `install_style.py` erneut ausführen, bei Projekten mit Zeichnungen auch mit `--project-assets`, denn `din.css` hat sich geändert. Schichten aus Stahl und Metall (Bleche) werden nur noch umrandet und nicht mehr schwarz gefüllt. Profile werden schwarz, wenn die Zeichnung `EPset_Drawing.Metadata` = `material.Category` trägt. Bekleidungen wie Fußbodenaufbau, Putz und Dachschräge verlieren den breiten Umriss und erscheinen ab 1:100 als eine Fläche. Neu sind zwölf Typen, darunter Fundamente, Treppe, Geländer und Dachrinne; vorhandene Typen behalten ihre GlobalId. Ein Mustermodell, in dem jede Typfamilie vorkommt, liegt in `examples/`.
 
+**Das Mustermodell mit Zeichnungssatz:** `examples/example_house.ifc` enthält 19 Zeichnungen und zu jeder ein Blatt, so wie Bonsai sie in der IFC ablegt: einen Entwurfssatz „E“ (Lageplan 1:500, Grundrisse, Schnitt und Ansichten 1:100, Blätter A4 und A3) und einen Werkplansatz „W“ (1:50, Blätter A2). Die Grundrisse blenden Bodenplatte, Decken, Fußbodenaufbau und Fundamente aus, damit die geschnittenen Wände zu sehen sind und nicht der Boden darunter. Die Zeichnungsdateien selbst entstehen erst in Bonsai:
+1. Den Zeichenstil im Datenordner installieren (siehe oben).
+2. Das Mustermodell öffnen, eine Zeichnung aktivieren und *Create Drawing* wählen.
+3. Die Blätter laden. Bonsai legt dabei das Layout jedes Blatts an, dessen Zeichnung schon erzeugt ist; *Create Sheets* baut dann das Blatt.
+
+Mit [bonsai-btk](https://github.com/modelllogik/bonsai-btk) erledigt *Update Sheet* die Schritte 2 und 3 für ein Blatt auf einmal, einschließlich Nachbearbeitung, Legende und Nordpfeil. Bonsai setzt die Zeichnung zunächst links oben aufs Blatt (30 mm vom Rand); verschieben lässt sie sich im Layout oder in der Browser-Vorschau von bonsai-btk.
+
+**Bekannte Einschränkung, Außenwände des Mustermodells:** Die Außenwände haben an den Ecken einen Schichtvorrang (Mauerwerk stumpf gestoßen, WDVS herumgeführt). Solche Wände kann IfcOpenShell 0.9 nicht neu berechnen ([#10054](https://github.com/IfcOpenShell/IfcOpenShell/issues/10054)). Wer im Mustermodell eine Außenwand verschiebt oder ändert, bekommt deshalb eine Fehlermeldung (`TypeError`). Das Zeichnen ist nicht betroffen. Eine Korrektur ist vorgeschlagen ([PR #10071](https://github.com/IfcOpenShell/IfcOpenShell/pull/10071)); bis sie in Bonsai angekommen ist, die Außenwände im Mustermodell nicht bearbeiten. Das Skript `build_example.py` bringt die Korrektur für sich selbst mit.
+
 ## 4 · Eine Schraffur ergänzen
 
 Schraffur und Linienstärke hängen an der **Kategorie** eines Materials (`IfcMaterial.Category`), nicht an seinem Namen. Bonsai schreibt die Kategorie jeder geschnittenen Schicht als Klasse `layer-material-category-…` in die Zeichnung.

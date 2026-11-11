@@ -5,7 +5,8 @@
 *Modelllogik is German for model logic.*
 
 > **Status: v0.4.0.** A neutral example house in [`examples/`](examples/README.md) uses
-> every type family of the template and doubles as a test model. The template now has
+> every type family of the template and doubles as a test model; it carries a drawing set
+> of 19 drawings and sheets. The template now has
 > 246 types: new are strip and pad footings, a stair flight, a straight stair, a landing,
 > rafter insulation, a bitumen membrane, a ceiling lining, a window sill, a gutter, a
 > downpipe and a railing; French windows show their swing in the plan. The drawing style
@@ -70,7 +71,9 @@ practice and the drawing conventions of DIN 1356.
 [`examples/example_house.ifc`](examples/example_house.ifc) is a plain, fictitious house
 with a gable roof, a stair and a carport, built from the template by
 [`examples/build_example.py`](examples/build_example.py). Every type family of the
-template occurs in it at least once, so it doubles as a test model; see
+template occurs in it at least once, so it doubles as a test model. It carries a
+drawing set as Bonsai stores it in the IFC: plans, a section and elevations at 1:100
+and 1:50, a site plan, and one sheet per drawing. See
 [`examples/README.md`](examples/README.md).
 
 ### Building the template yourself
@@ -197,3 +200,4 @@ Findings that belong to Bonsai or IfcOpenShell are reported there, not worked ar
 
 - [#10133](https://github.com/IfcOpenShell/IfcOpenShell/issues/10133) – GPU wireframe snap: the batch cache is stored and looked up under different keys.
 - [#10134](https://github.com/IfcOpenShell/IfcOpenShell/issues/10134) – *New Project* with a template that has a site: merged surface styles and types get no Blender material or object.
+- [#10054](https://github.com/IfcOpenShell/IfcOpenShell/issues/10054) (reported by others; we confirmed it on [PR #10071](https://github.com/IfcOpenShell/IfcOpenShell/pull/10071)) – walls with layer priorities at a connection cannot be regenerated. The example house is affected; `examples/build_example.py` applies the proposed fix to itself.
